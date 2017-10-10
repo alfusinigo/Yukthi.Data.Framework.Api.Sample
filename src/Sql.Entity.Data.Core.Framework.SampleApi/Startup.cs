@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Yc.Sql.Entity.Data.Framework.Extensions;
 using Sql.Entity.Data.Core.Framework.SampleApi.DataAccess.Mappers;
 using Sql.Entity.Data.Core.Framework.SampleApi.DataAccess.Controllers;
@@ -30,14 +24,22 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi
         {
             services.AddMvc();
 
-            //Add Yc framework services
+            //Add Sql Server
             services.AddSqlDatabase(Configuration);
-            services.AddInternalCaching(Configuration);
-            services.AddDataControllerAndMapper<IEmployeeDataMapper, EmployeeDataMapper, IEmployeeDataController, EmployeeDataController>();
+                      
+            //This can be either memory, redis or sql server (implementation of IDistributedCache)
+            services.AddDistributedMemoryCache();
 
+            //To Enable Yc framework Caching
+            services.AddDataCaching(Configuration); 
+
+            //Add specific Yc data controller and mappers
+            services.AddDataControllerAndMapper<IEmployeeDataMapper, EmployeeDataMapper, IEmployeeDataController, EmployeeDataController>();
+            
+            //Add data repository
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
-            services.AddSwaggerGen(sg => { sg.SwaggerDoc("v1", new Info { Title = "Employee API", Version = "v1" }); });
+            services.AddSwaggerGen(sg => { sg.SwaggerDoc("v1", new Info { Title = "Employee Sample API", Version = "v1" }); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,7 +54,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi
 
             app.UseSwaggerUI(si =>
             {
-                si.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee API V1");
+                si.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee Sample API V1");
             });
 
             app.UseMvc();

@@ -45,8 +45,8 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Controllers
             return new OkObjectResult(employee);
         }
 
-        [HttpGet("{name}")]
-        public IActionResult GetByName(string  name)
+        [HttpGet("GetByName")]
+        public IActionResult GetByName(string name)
         {
             var employees = repository.GetEmployeesByName(name, new Guid().ToString(), Request.HttpContext.User.Identity.Name);
 
