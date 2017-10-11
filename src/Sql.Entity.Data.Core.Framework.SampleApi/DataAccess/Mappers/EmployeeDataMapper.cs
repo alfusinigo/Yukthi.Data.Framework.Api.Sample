@@ -14,6 +14,11 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.DataAccess.Mappers
         {
         }
 
+        public EmployeeDataMapper(IDatabase database, ILogger<DataMapperBase> logger)
+            : base(database, logger)
+        {
+        }
+
         public override void SetFunctionSpecificEntityMappings(IBaseContext context)
         {
             switch (context.ControllerFunction)

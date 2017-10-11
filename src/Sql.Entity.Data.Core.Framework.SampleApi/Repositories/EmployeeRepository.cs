@@ -4,7 +4,6 @@ using Sql.Entity.Data.Core.Framework.SampleApi.DataAccess.Controllers;
 using Sql.Entity.Data.Core.Framework.SampleApi.DataAccess.Models;
 using System;
 using System.Collections.Generic;
-using Yc.Sql.Entity.Data.Core.Framework.Model.Context;
 using Yc.Sql.Entity.Data.Core.Framework.Model.Controller;
 
 namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
