@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "v1/employee",
+      "launchUrl": "api/employee",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -19,7 +19,7 @@
     "Sql.Entity.Data.Core.Framework.SampleApi": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "v1/employee",
+      "launchUrl": "api/employee",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

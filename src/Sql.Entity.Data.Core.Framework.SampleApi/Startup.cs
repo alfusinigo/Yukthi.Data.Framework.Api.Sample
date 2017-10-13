@@ -39,7 +39,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi
             //Add data repository
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
-            services.AddSwaggerGen(sg => { sg.SwaggerDoc("v1", new Info { Title = "Employee Sample API", Version = "v1" }); });
+            services.AddSwaggerGen(sg => { sg.SwaggerDoc("api", new Info { Title = "Employee Sample API", Version = "1" }); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,7 +54,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi
 
             app.UseSwaggerUI(si =>
             {
-                si.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee Sample API V1");
+                si.SwaggerEndpoint("/swagger/employeesample.json", "Employee Sample API");
             });
 
             app.UseMvc();

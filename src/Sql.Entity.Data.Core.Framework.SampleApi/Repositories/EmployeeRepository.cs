@@ -23,7 +23,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
         {
             logger.LogDebug($"Executing GetAllEmployees, Correlation: {correlation}, Requestor: {requestor}...");
 
-            var responseInfo = dataController.GetEntities(
+            var responseInfo = dataController.GetEntities<Employee>(
                 new Employee
                 {
                     ControllerFunction = EmployeeFunction.GetAll
@@ -39,11 +39,31 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
             return null;
         }
 
+        public dynamic GetAllEmployeesDynamic(string correlation, string requestor)
+        {
+            logger.LogDebug($"Executing GetAllEmployees, Correlation: {correlation}, Requestor: {requestor}...");
+
+            var responseInfo = dataController.GetEntities<dynamic>(
+                new Employee
+                {
+                    ControllerFunction = EmployeeFunction.GetAll
+                },
+                GenerateRequestInfo(correlation, requestor));
+
+            if (responseInfo.Status == Status.Failure)
+                logger.LogError($"Executing GetAllEmployees failed, Message: {responseInfo.Message}, Correlation: {correlation}, Requestor: {requestor}...");
+
+            else if (responseInfo.Status == Status.Success && responseInfo.Data != null)
+                return responseInfo.Data;
+
+            return null;
+        }
+
         public Employee GetEmployeeById(int employeeId, string correlation, string requestor)
         {
             logger.LogDebug($"Executing GetEmployeeById, EmployeeId: {employeeId}, Correlation: {correlation}, Requestor: {requestor}...");
 
-            var responseInfo = dataController.GetEntity(
+            var responseInfo = dataController.GetEntity<Employee>(
                 new Employee
                 {
                     ControllerFunction = EmployeeFunction.GetById,
@@ -64,7 +84,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
         {
             logger.LogDebug($"Executing GetEmployeesByName, Name: {employeeName}, Correlation: {correlation}, Requestor: {requestor}...");
 
-            var responseInfo = dataController.GetEntities(
+            var responseInfo = dataController.GetEntities<Employee>(
                 new Employee
                 {
                     ControllerFunction = EmployeeFunction.GetEmployeeByName,
@@ -96,7 +116,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
                 return null;
             }
 
-            responseInfo = dataController.GetEntity(
+            responseInfo = dataController.GetEntity<Employee>(
                 new Employee
                 {
                     ControllerFunction = EmployeeFunction.GetById,
@@ -121,7 +141,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
                 return null;
             }
 
-            responseInfo = dataController.GetEntity(
+            responseInfo = dataController.GetEntity<Employee>(
                 new Employee
                 {
                     ControllerFunction = EmployeeFunction.GetById,
@@ -141,6 +161,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
     public interface IEmployeeRepository
     {
         List<Employee> GetAllEmployees(string correlation, string requestor);
+        dynamic GetAllEmployeesDynamic(string correlation, string requestor);
         Employee GetEmployeeById(int employeeId, string correlation, string requestor);
         List<Employee> GetEmployeesByName(string employeeName, string correlation, string requestor);
         Employee InsertEmployee(Employee employee, string correlation, string requestor);

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Sql.Entity.Data.Core.Framework.SampleApi.Repositories;
 using Microsoft.Extensions.Logging;
@@ -9,7 +6,7 @@ using Sql.Entity.Data.Core.Framework.SampleApi.DataAccess.Models;
 
 namespace Sql.Entity.Data.Core.Framework.SampleApi.Controllers
 {
-    [Route("v1/[controller]")]
+    [Route("api/[controller]")]
     public class EmployeeController : ControllerBase
     {
         IEmployeeRepository repository;
@@ -21,28 +18,37 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Controllers
             this.logger = logger;
         }
 
-        // GET v1/employee
         [HttpGet]
         public IActionResult GetAll()
         {
             var employees = repository.GetAllEmployees(new Guid().ToString(), Request.HttpContext.User.Identity.Name);
 
-            if (employees == null || employees.Count == 0)
-                return new NotFoundResult();
+            if (employees == null)
+                return new JsonResult("Some internal error occurred, please refer to log for more details");
 
-            return new OkObjectResult(employees);
+            return new JsonResult(employees);
         }
 
-        // GET v1/employee/5
+        [HttpGet("GetAllDynamic")]
+        public IActionResult GetAllDynamic()
+        {
+            var employees = repository.GetAllEmployeesDynamic(new Guid().ToString(), Request.HttpContext.User.Identity.Name);
+
+            if (employees == null)
+                return new JsonResult("Some error could have occurred, please refer to log for more details");
+
+            return new JsonResult(employees);
+        }
+
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
             var employee = repository.GetEmployeeById(id, new Guid().ToString(), Request.HttpContext.User.Identity.Name);
 
             if (employee == null)
-                return new NotFoundObjectResult($"Id = {id}");
+                return new JsonResult($"Could not retrieve any data by Id = {id}, please refer to log for more details");
 
-            return new OkObjectResult(employee);
+            return new JsonResult(employee);
         }
 
         [HttpGet("GetByName")]
@@ -50,27 +56,26 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Controllers
         {
             var employees = repository.GetEmployeesByName(name, new Guid().ToString(), Request.HttpContext.User.Identity.Name);
 
-            if (employees == null || employees.Count == 0)
-                return new NotFoundObjectResult($"Employee Name = {name}");
+            if (employees == null)
+                return new JsonResult($"Could not retrieve any data by employee name = {name}, please refer to log for more details");
 
-            return new OkObjectResult(employees);
+            return new JsonResult(employees);
         }
 
-        // POST v1/employee
         [HttpPost]
         public IActionResult Post([FromBody]Employee employee)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return new BadRequestObjectResult(ModelState);
 
             var createdEmployee = repository.InsertEmployee(employee, new Guid().ToString(), Request.HttpContext.User.Identity.Name);
 
-            if (createdEmployee == null) return new JsonResult($"Unable to create employee, {employee}");
+            if (createdEmployee == null)
+                return new JsonResult($"Unable to create employee, {employee}");
 
-            return new CreatedAtActionResult("GetById", "Employee", new {createdEmployee.Id}, createdEmployee);
+            return new CreatedAtActionResult("GetById", "Employee", new { createdEmployee.Id }, createdEmployee);
         }
 
-        // PUT v1/employee
         [HttpPut("{id}")]
         public IActionResult Put([FromBody]Employee employee)
         {
@@ -80,9 +85,9 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Controllers
             var updatedEmployee = repository.UpdateEmployee(employee, new Guid().ToString(), Request.HttpContext.User.Identity.Name);
 
             if (updatedEmployee == null)
-                return new NotFoundObjectResult(employee);
+                return new JsonResult($"Update failed for {employee}");
 
-            return new AcceptedAtActionResult("GetById", "Employee", new {updatedEmployee.Id}, updatedEmployee);
+            return new AcceptedAtActionResult("GetById", "Employee", new { updatedEmployee.Id }, updatedEmployee);
         }
     }
 }
