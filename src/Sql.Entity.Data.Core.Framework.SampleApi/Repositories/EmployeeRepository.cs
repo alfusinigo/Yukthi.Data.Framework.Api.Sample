@@ -28,7 +28,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
                 {
                     ControllerFunction = EmployeeFunction.GetAll
                 },
-                GenerateRequestInfo(correlation, requestor));
+                GenerateCorrelationInfo(correlation, requestor));
 
             if (responseInfo.Status == Status.Failure)
                 logger.LogError($"Executing GetAllEmployees failed, Message: {responseInfo.Message}, Correlation: {correlation}, Requestor: {requestor}...");
@@ -48,7 +48,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
                 {
                     ControllerFunction = EmployeeFunction.GetAll
                 },
-                GenerateRequestInfo(correlation, requestor));
+                GenerateCorrelationInfo(correlation, requestor));
 
             if (responseInfo.Status == Status.Failure)
                 logger.LogError($"Executing GetAllEmployees failed, Message: {responseInfo.Message}, Correlation: {correlation}, Requestor: {requestor}...");
@@ -69,7 +69,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
                     ControllerFunction = EmployeeFunction.GetById,
                     Id = employeeId
                 },
-                GenerateRequestInfo(correlation, requestor));
+                GenerateCorrelationInfo(correlation, requestor));
 
             if (responseInfo.Status == Status.Failure)
                 logger.LogError($"Executing GetEmployeeById failed, Message: {responseInfo.Message}, Correlation: {correlation}, Requestor: {requestor}...");
@@ -91,7 +91,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
                     FirstName = employeeName,
                     LastName = employeeName
                 },
-                GenerateRequestInfo(correlation, requestor));
+                GenerateCorrelationInfo(correlation, requestor));
 
             if (responseInfo.Status == Status.Failure)
                 logger.LogError($"Executing GetEmployeesByName failed, Message: {responseInfo.Message}, Correlation: {correlation}, Requestor: {requestor}...");
@@ -108,7 +108,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
 
             employee.ControllerFunction = EmployeeFunction.Create;
 
-            var responseInfo = dataController.SubmitChanges(employee, GenerateRequestInfo(correlation, requestor));
+            var responseInfo = dataController.SubmitChanges(employee, GenerateCorrelationInfo(correlation, requestor));
 
             if (responseInfo.Status == Status.Failure)
             {
@@ -122,7 +122,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
                     ControllerFunction = EmployeeFunction.GetById,
                     Id = Convert.ToInt32(responseInfo.Data)
                 },
-                GenerateRequestInfo(correlation, requestor));
+                GenerateCorrelationInfo(correlation, requestor));
 
             return (Employee)responseInfo.Data;
         }
@@ -133,7 +133,7 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
 
             employee.ControllerFunction = EmployeeFunction.Update;
 
-            var responseInfo = dataController.SubmitChanges(employee, GenerateRequestInfo(correlation, requestor));
+            var responseInfo = dataController.SubmitChanges(employee, GenerateCorrelationInfo(correlation, requestor));
 
             if (responseInfo.Status == Status.Failure)
             {
@@ -147,14 +147,14 @@ namespace Sql.Entity.Data.Core.Framework.SampleApi.Repositories
                     ControllerFunction = EmployeeFunction.GetById,
                     Id = Convert.ToInt32(responseInfo.Data)
                 },
-                GenerateRequestInfo(correlation, requestor));
+                GenerateCorrelationInfo(correlation, requestor));
 
             return (Employee)responseInfo.Data;
         }
 
-        private IDataRequestInfo GenerateRequestInfo(string correlation, string requestor)
+        private ICorrelationInfo GenerateCorrelationInfo(string correlation, string requestor)
         {
-            return new DataRequestInfo { CorrelationId = correlation, RequestorName = requestor };
+            return new CorrelationInfo { CorrelationId = correlation, RequestorName = requestor };
         }
     }
 
